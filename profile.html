@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil - Lartwa</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f6f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .card {
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 450px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card text-center">
+  <h3 class="mb-4">Foydalanuvchi Profil</h3>
+  <div id="profileInfo" class="mb-3">
+    <p><strong>Ism:</strong> <span id="name">...</span></p>
+    <p><strong>Email:</strong> <span id="email">...</span></p>
+  </div>
+  <button class="btn btn-danger" onclick="logout()">Chiqish</button>
+</div>
+
+<script>
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    window.location.href = "login.html";
+  }
+
+  fetch("http://localhost/api.lartwa.com/profile", {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status) {
+      document.getElementById("name").textContent = data.name;
+      document.getElementById("email").textContent = data.email;
+    } else {
+      alert("Token xato yoki vaqti tugagan. Qayta kiring.");
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Xatolik yuz berdi. Iltimos, keyinroq urinib ko‘ring.");
+    window.location.href = "login.html";
+  });
+
+  function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>
